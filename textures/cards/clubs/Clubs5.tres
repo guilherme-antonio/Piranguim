@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://d1djruqiyvl1c"]
+
+[ext_resource type="Texture2D" uid="uid://c8k5g7lj6gjah" path="res://sprites/Clubs - Top Down 88x124.png" id="1_spi21"]
+
+[resource]
+atlas = ExtResource("1_spi21")
+region = Rect2(352, 0, 88, 124)

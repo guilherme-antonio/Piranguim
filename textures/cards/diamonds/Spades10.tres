@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://x2gx7ksnwyju"]
+
+[ext_resource type="Texture2D" uid="uid://dhsg1ru86wkn7" path="res://sprites/Diamonds - Top Down 88x124.png" id="1_qavho"]
+
+[resource]
+atlas = ExtResource("1_qavho")
+region = Rect2(352, 124, 88, 124)

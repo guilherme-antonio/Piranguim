@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://cna4eq21fo416"]
+
+[ext_resource type="Texture2D" uid="uid://dc48b1gm0tqe4" path="res://sprites/Spades - Top Down 88x124.png" id="1_rg7ha"]
+
+[resource]
+atlas = ExtResource("1_rg7ha")
+region = Rect2(0, 124, 88, 124)
