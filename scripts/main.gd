@@ -19,8 +19,17 @@ func _ready() -> void:
 
 func _create_deck():
 	for suit in Suit:
-		for rank in 13:
-			deck.append(Card.new(rank, suit))
+		for rank in range(1, 13):
+			var real_rank = rank
+			if rank == 1:
+				real_rank = "A"
+			if rank == 11:
+				real_rank = "J"
+			if rank == 12:
+				real_rank = "Q"
+			if rank == 13:
+				real_rank = "K"
+			deck.append(Card.new(real_rank, suit))
 	deck.shuffle()
 	
 func _fill_card_slots():
