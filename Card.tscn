@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cdvqba830ybuj"]
+[gd_scene load_steps=3 format=3 uid="uid://cdvqba830ybuj"]
 
 [ext_resource type="Texture2D" uid="uid://do048fch6x486" path="res://textures/cards/others/placeholder.tres" id="1_rujxu"]
+[ext_resource type="Script" path="res://scripts/slot.gd" id="1_tni1n"]
 
 [node name="Node2D" type="Node2D"]
+script = ExtResource("1_tni1n")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(44, -62)
