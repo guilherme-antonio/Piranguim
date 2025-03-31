@@ -3,6 +3,9 @@ extends Node2D
 var deck = []
 var slots
 var top_card
+var score_calculator
+
+var score_text_format = "[center]Score %s[/center]"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -18,6 +21,8 @@ func _ready() -> void:
 	_start_game()
 	
 func _start_game():
+	score_calculator = ScoreCalculator.new(0)
+	$Score.text = score_text_format % 0
 	_create_deck()
 	_fill_card_slots()
 	_select_top_card()
@@ -58,6 +63,7 @@ func _select_top_card(card = null):
 		top_card = card
 	$"Card-Top".set_card(top_card)
 	$"Card-Top".update()
+	score_calculator.reset()
 			
 func _on_card_click(row, collumn, card):
 	if (abs(card.order - top_card.order) == 1 or abs(card.order - top_card.order) == 12):
@@ -65,13 +71,20 @@ func _on_card_click(row, collumn, card):
 		top_card = card
 		$"Card-Top".set_card(card)
 		$"Card-Top".update()
-		var close_slots = _get_close_slots(row, collumn)
-		if (close_slots[0] != null and close_slots[0].is_empty()):
-			slots[row-1][collumn-1].set_visibility(true)
-			slots[row-1][collumn-1].update()
-		if (close_slots[1] != null and close_slots[1].is_empty()):
-			slots[row-1][collumn].set_visibility(true)
-			slots[row-1][collumn].update()
+		_check_other_cards(row, collumn)
+		_add_score(row)
+		
+func _check_other_cards(row, collumn):
+	var close_slots = _get_close_slots(row, collumn)
+	if (close_slots[0] != null and close_slots[0].is_empty()):
+		slots[row-1][collumn-1].set_visibility(true)
+		slots[row-1][collumn-1].update()
+	if (close_slots[1] != null and close_slots[1].is_empty()):
+		slots[row-1][collumn].set_visibility(true)
+		slots[row-1][collumn].update()
+		
+func _add_score(row):
+	$Score.text = score_text_format % score_calculator.get_score(row)
 		
 func _get_close_slots(row, collumn):
 	var left_slot = null
