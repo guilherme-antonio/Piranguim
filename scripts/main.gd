@@ -15,23 +15,26 @@ func _ready() -> void:
 		[$"Card-6-1", $"Card-6-2", $"Card-6-3", $"Card-6-4", $"Card-6-5", $"Card-6-6"],
 		[$"Card-7-1", $"Card-7-2", $"Card-7-3", $"Card-7-4", $"Card-7-5", $"Card-7-6", $"Card-7-7"]
 	]
+	_start_game()
+	
+func _start_game():
 	_create_deck()
 	_fill_card_slots()
 	_select_top_card()
 
 func _create_deck():
 	for suit in Suit:
-		for rank in range(1, 14):
-			var real_rank = rank
-			if rank == 1:
-				real_rank = "A"
-			if rank == 11:
-				real_rank = "J"
-			if rank == 12:
-				real_rank = "Q"
-			if rank == 13:
-				real_rank = "K"
-			deck.append(Card.new(rank, real_rank, suit))
+		for order in range(1, 14):
+			var rank = order
+			if order == 1:
+				rank = "A"
+			if order == 11:
+				rank = "J"
+			if order == 12:
+				rank = "Q"
+			if order == 13:
+				rank = "K"
+			deck.append(Card.new(order, rank, suit))
 	deck.shuffle()
 	
 func _fill_card_slots():
@@ -93,3 +96,6 @@ func _on_pile_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> 
 					$"Card-Top".update()
 					if (deck.is_empty()):
 						$Pile/Sprite2D.texture = load("res://textures/cards/others/placeholder.tres")
+
+func _on_reset_pressed() -> void:
+	_start_game()
