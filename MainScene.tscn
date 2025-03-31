@@ -113,9 +113,9 @@ polygon = PackedVector2Array(-44, 62, -44, -62, 44, -62, 44, 62)
 
 [node name="Reset" type="Button" parent="."]
 offset_left = 1488.0
-offset_top = 50.0
+offset_top = 30.0
 offset_right = 1540.0
-offset_bottom = 82.0
+offset_bottom = 62.0
 text = "Reset"
 
 [node name="Score" type="RichTextLabel" parent="."]
@@ -125,6 +125,15 @@ offset_right = 430.0
 offset_bottom = 80.0
 bbcode_enabled = true
 text = "[center]Score
+0[/center]"
+
+[node name="RemainingCardsText" type="RichTextLabel" parent="."]
+offset_left = 710.0
+offset_top = 30.0
+offset_right = 852.0
+offset_bottom = 77.0
+bbcode_enabled = true
+text = "[center]Remaining Cards
 0[/center]"
 
 [connection signal="input_event" from="Pile" to="." method="_on_pile_input_event"]

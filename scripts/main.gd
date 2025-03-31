@@ -6,6 +6,7 @@ var top_card
 var score_calculator
 
 var score_text_format = "[center]Score %s[/center]"
+var remaining_cards_text_format = "[center]Remaining Cards %s[/center]"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -22,12 +23,19 @@ func _ready() -> void:
 	
 func _start_game():
 	score_calculator = ScoreCalculator.new(0)
-	$Score.text = score_text_format % 0
+	_reset_score()
 	_create_deck()
 	_fill_card_slots()
 	_select_top_card()
+	_reset_pile_texture()
+	_update_remaing_cards_text()
+	
+func _reset_score():
+	score_calculator.reset()
+	$Score.text = score_text_format % 0
 
 func _create_deck():
+	deck.clear()
 	for suit in Suit:
 		for order in range(1, 14):
 			var rank = order
@@ -64,13 +72,14 @@ func _select_top_card(card = null):
 	$"Card-Top".set_card(top_card)
 	$"Card-Top".update()
 	score_calculator.reset()
+	
+func _reset_pile_texture():
+	$Pile/Sprite2D.texture = load("res://textures/cards/others/cardback.tres")
 			
 func _on_card_click(row, collumn, card):
 	if (abs(card.order - top_card.order) == 1 or abs(card.order - top_card.order) == 12):
 		slots[row][collumn].clear_slot()
-		top_card = card
-		$"Card-Top".set_card(card)
-		$"Card-Top".update()
+		_select_top_card(card)
 		_check_other_cards(row, collumn)
 		_add_score(row)
 		
@@ -83,9 +92,6 @@ func _check_other_cards(row, collumn):
 		slots[row-1][collumn].set_visibility(true)
 		slots[row-1][collumn].update()
 		
-func _add_score(row):
-	$Score.text = score_text_format % score_calculator.get_score(row)
-		
 func _get_close_slots(row, collumn):
 	var left_slot = null
 	var right_slot = null
@@ -94,21 +100,24 @@ func _get_close_slots(row, collumn):
 	if collumn < (slots[row].size() - 1):
 		right_slot = slots[row][collumn+1]
 	return [left_slot, right_slot]
-
-enum Suit {CLUBS, SPADES, DIAMONDS, HEARTS}
-
+	
+func _add_score(row):
+	$Score.text = score_text_format % score_calculator.get_score(row)
+	
+func _update_remaing_cards_text():
+	$RemainingCardsText.text = remaining_cards_text_format % deck.size()
 
 func _on_pile_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if (event is InputEventMouseButton):
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				if (!deck.is_empty()):
-					var next_card = deck.pop_front()
-					top_card = next_card
-					$"Card-Top".set_card(next_card)
-					$"Card-Top".update()
+					_select_top_card()
+					_update_remaing_cards_text()
 					if (deck.is_empty()):
 						$Pile/Sprite2D.texture = load("res://textures/cards/others/placeholder.tres")
 
 func _on_reset_pressed() -> void:
 	_start_game()
+
+enum Suit {CLUBS, SPADES, DIAMONDS, HEARTS}
