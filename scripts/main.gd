@@ -21,7 +21,7 @@ func _ready() -> void:
 
 func _create_deck():
 	for suit in Suit:
-		for rank in range(1, 13):
+		for rank in range(1, 14):
 			var real_rank = rank
 			if rank == 1:
 				real_rank = "A"
@@ -37,15 +37,16 @@ func _create_deck():
 func _fill_card_slots():
 	var row_count = 0
 	for row in slots:
-		row_count += 1
-		var hide_card = (row != slots[slots.size() - 1])
+		var visible = (row == slots[slots.size() - 1])
 		var collumn_count = 0
 		for slot in row:
-			collumn_count += 1
 			slot.set_position(row_count, collumn_count)
 			slot.set_card(deck.pop_front())
-			slot.set_visibility(hide_card)
+			slot.set_visibility(visible)
+			slot.update()
 			slot.set_click_event_handler(Callable(self, "_on_card_click"))
+			collumn_count += 1
+		row_count += 1
 			
 func _select_top_card(card = null):
 	if (card == null):
@@ -53,10 +54,42 @@ func _select_top_card(card = null):
 	else:
 		top_card = card
 	$"Card-Top".set_card(top_card)
-	$"Card-Top".set_visibility(false)
+	$"Card-Top".update()
 			
 func _on_card_click(row, collumn, card):
-	if (abs(card.order - top_card.order) == 1):
-		slots[row-1][collumn-1].clear_slot()
+	if (abs(card.order - top_card.order) == 1 or abs(card.order - top_card.order) == 12):
+		slots[row][collumn].clear_slot()
+		top_card = card
+		$"Card-Top".set_card(card)
+		$"Card-Top".update()
+		var close_slots = _get_close_slots(row, collumn)
+		if (close_slots[0] != null and close_slots[0].is_empty()):
+			slots[row-1][collumn-1].set_visibility(true)
+			slots[row-1][collumn-1].update()
+		if (close_slots[1] != null and close_slots[1].is_empty()):
+			slots[row-1][collumn].set_visibility(true)
+			slots[row-1][collumn].update()
+		
+func _get_close_slots(row, collumn):
+	var left_slot = null
+	var right_slot = null
+	if collumn > 0:
+		left_slot = slots[row][collumn-1]
+	if collumn < (slots[row].size() - 1):
+		right_slot = slots[row][collumn+1]
+	return [left_slot, right_slot]
 
 enum Suit {CLUBS, SPADES, DIAMONDS, HEARTS}
+
+
+func _on_pile_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if (event is InputEventMouseButton):
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				if (!deck.is_empty()):
+					var next_card = deck.pop_front()
+					top_card = next_card
+					$"Card-Top".set_card(next_card)
+					$"Card-Top".update()
+					if (deck.is_empty()):
+						$Pile/Sprite2D.texture = load("res://textures/cards/others/placeholder.tres")
