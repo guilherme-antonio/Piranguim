@@ -54,14 +54,14 @@ func _fill_card_slots():
 	var row_count = 0
 	for row in slots:
 		var visible = (row == slots[slots.size() - 1])
-		var collumn_count = 0
+		var column_count = 0
 		for slot in row:
-			slot.set_position(row_count, collumn_count)
+			slot.set_position(row_count, column_count)
 			slot.set_card(deck.pop_front())
 			slot.set_visibility(visible)
 			slot.update()
 			slot.set_click_event_handler(Callable(self, "_on_card_click"))
-			collumn_count += 1
+			column_count += 1
 		row_count += 1
 			
 func _select_top_card(card = null):
@@ -76,29 +76,29 @@ func _select_top_card(card = null):
 func _reset_pile_texture():
 	$Pile/Sprite2D.texture = load("res://textures/cards/others/cardback.tres")
 			
-func _on_card_click(row, collumn, card):
+func _on_card_click(row, column, card):
 	if (abs(card.order - top_card.order) == 1 or abs(card.order - top_card.order) == 12):
-		slots[row][collumn].clear_slot()
+		slots[row][column].clear_slot()
 		_select_top_card(card)
-		_check_other_cards(row, collumn)
+		_check_other_cards(row, column)
 		_add_score(row)
 		
-func _check_other_cards(row, collumn):
-	var close_slots = _get_close_slots(row, collumn)
+func _check_other_cards(row, column):
+	var close_slots = _get_close_slots(row, column)
 	if (close_slots[0] != null and close_slots[0].is_empty()):
-		slots[row-1][collumn-1].set_visibility(true)
-		slots[row-1][collumn-1].update()
+		slots[row-1][column-1].set_visibility(true)
+		slots[row-1][column-1].update()
 	if (close_slots[1] != null and close_slots[1].is_empty()):
-		slots[row-1][collumn].set_visibility(true)
-		slots[row-1][collumn].update()
+		slots[row-1][column].set_visibility(true)
+		slots[row-1][column].update()
 		
-func _get_close_slots(row, collumn):
+func _get_close_slots(row, column):
 	var left_slot = null
 	var right_slot = null
-	if collumn > 0:
-		left_slot = slots[row][collumn-1]
-	if collumn < (slots[row].size() - 1):
-		right_slot = slots[row][collumn+1]
+	if column > 0:
+		left_slot = slots[row][column-1]
+	if column < (slots[row].size() - 1):
+		right_slot = slots[row][column+1]
 	return [left_slot, right_slot]
 	
 func _add_score(row):
@@ -111,13 +111,43 @@ func _on_pile_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> 
 	if (event is InputEventMouseButton):
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				if (!deck.is_empty()):
-					_select_top_card()
-					_update_remaing_cards_text()
-					if (deck.is_empty()):
-						$Pile/Sprite2D.texture = load("res://textures/cards/others/placeholder.tres")
+				_get_card_from_pile()
+
+func _get_card_from_pile():
+	if (!deck.is_empty()):
+		_select_top_card()
+		_update_remaing_cards_text()
+		if (deck.is_empty()):
+			$Pile/Sprite2D.texture = load("res://textures/cards/others/placeholder.tres")
 
 func _on_reset_pressed() -> void:
 	_start_game()
+	
+func _process(delta: float) -> void:
+	if (Input.is_action_just_pressed("reset")):
+		_start_game()
+	if (Input.is_action_just_pressed("get_card_from_pile")):
+		_get_card_from_pile()
+	if (Input.is_action_just_pressed("select_card_1")):
+		_select_card(0)
+	if (Input.is_action_just_pressed("select_card_2")):
+		_select_card(1)
+	if (Input.is_action_just_pressed("select_card_3")):
+		_select_card(2)
+	if (Input.is_action_just_pressed("select_card_4")):
+		_select_card(3)
+	if (Input.is_action_just_pressed("select_card_5")):
+		_select_card(4)
+	if (Input.is_action_just_pressed("select_card_6")):
+		_select_card(5)
+	if (Input.is_action_just_pressed("select_card_7")):
+		_select_card(6)
+		
+func _select_card(select_column):
+	for row in slots:
+		if (row.size() > select_column):
+			var slot = row[select_column]
+			if slot.is_visible() && !slot.is_empty():
+				_on_card_click(slots.find(row), select_column, slot.card)
 
 enum Suit {CLUBS, SPADES, DIAMONDS, HEARTS}
