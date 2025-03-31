@@ -33,7 +33,8 @@ func is_empty():
 func _set_sprite():
 	var path
 	if (visible):
-		path = "res://textures/cards/%s/%s%s.tres" % [card.suit, card.suit, card.rank]
+		path = "res://textures/cards/%s/%s%s.tres" % [card.suit.to_lower(), card.suit.to_pascal_case(), card.rank]
+		print(path)
 	else:
 		path = "res://textures/cards/others/cardback.tres"
 	$Sprite2D.texture = load(path)
