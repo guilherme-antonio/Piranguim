@@ -4,6 +4,9 @@ var deck = []
 var slots
 var top_card
 var score_calculator
+var entered_text = false
+
+const MAX_NOTE_LINE_NUMBER = 33
 
 var score_text_format = "[center]Score %s[/center]"
 var remaining_cards_text_format = "[center]Remaining Cards %s[/center]"
@@ -124,6 +127,11 @@ func _on_reset_pressed() -> void:
 	_start_game()
 	
 func _process(delta: float) -> void:
+	_handle_inputs()
+	
+func _handle_inputs():
+	if (entered_text):
+		return
 	if (Input.is_action_just_pressed("reset")):
 		_start_game()
 	if (Input.is_action_just_pressed("get_card_from_pile")):
@@ -151,3 +159,20 @@ func _select_card(select_column):
 				_on_card_click(slots.find(row), select_column, slot.card)
 
 enum Suit {CLUBS, SPADES, DIAMONDS, HEARTS}
+
+
+func _on_notes_mouse_entered() -> void:
+	entered_text = true
+
+func _on_notes_mouse_exited() -> void:
+	entered_text = false
+
+func _on_notes_text_changed() -> void:
+	var lines = $Notes.get_line_count()
+	#print(lines)
+	#if lines > MAX_NOTE_LINE_NUMBER:
+		#var column = $Notes.get_line(MAX_NOTE_LINE_NUMBER).length()
+		#$Notes.select(MAX_NOTE_LINE_NUMBER - 1, column, lines, 0, column)
+		#$Notes.delete_selection()
+		#$Notes.deselect()
+		#$Notes.set_caret_line(MAX_NOTE_LINE_NUMBER - 1)
